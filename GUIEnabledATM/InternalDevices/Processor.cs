@@ -35,7 +35,7 @@ namespace GUIEnabledATM.InternalDevices
             _currentUserID = 0;
             _requestedAmount = 0;
             _currentPINAttempts = 0;
-            _waitTimer = (true, 0);
+            _waitTimer = (false, 0);
 
             _numInputs = new int[7] {0, 0, 0, 0, 0, 0, 0};
             _numInputCount = 0;
@@ -61,9 +61,6 @@ namespace GUIEnabledATM.InternalDevices
             
             if (sc._cardInserted)
             {
-                _currentUserID = sc._port.RecvInteger();
-                System.Diagnostics.Debug.WriteLine("Going to state 2 with currentUserID as " + _currentUserID);
-
                 mn._port1.Send("Please enter your pin");
                 _numKeysAvailable = true;
                 _funcKeysAvailable = true;

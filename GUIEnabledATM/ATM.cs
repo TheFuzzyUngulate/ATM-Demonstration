@@ -104,6 +104,16 @@ namespace GUIEnabledATM
 
         private void EventCapture(object? src, System.Timers.ElapsedEventArgs e)
         {
+            if (!cardScanner._cardInserted)
+            {
+                int uID = cardScanner._port.RecvInteger();
+                if (uID > 0)
+                {
+                    SCB._currentUserID = uID;
+                    cardScanner._cardInserted = true;
+                }
+            }
+
             if (SCB._numInputCount < SCB._numInputs.Length && SCB._numKeysAvailable)
             {
                 for (int i = 0; i < SCB._numScanStatus.Count; ++i)
