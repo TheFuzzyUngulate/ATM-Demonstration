@@ -9,7 +9,7 @@ namespace GUIEnabledATM.InternalDevices
     internal class SystemClock
     {
         internal int _absTime;
-        internal int _100msCounter;
+        internal int _100msCounter; 
         internal List<(bool isOn, int remTime)> _timers;
         internal (int hours, int minutes, int seconds) _currentTime;
 

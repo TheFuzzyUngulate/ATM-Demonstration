@@ -79,22 +79,22 @@ namespace GUIEnabledATM
             switch (SCB._procState)
             {
                 case 0:
-                    SCB.Welcome(monitor, cardScanner, keypad);
+                    SCB.Welcome(monitor, cardScanner);
                     break;
                 case 1:
-                    SCB.CheckPIN(keypad, accountDatabase, monitor);
+                    SCB.CheckPIN(accountDatabase, monitor);
                     break;
                 case 2:
-                    SCB.CheckAmount(keypad, monitor);
+                    SCB.CheckAmount(monitor);
                     break;
                 case 3:
                     SCB.VerifyAccBalance(accountDatabase, monitor);
                     break;
                 case 4:
-                    SCB.VerifyCashAvailability(cashBank, monitor);
+                    SCB.VerifyCashAvailability(accountDatabase, cashBank, monitor);
                     break;
                 case 5:
-                    SCB.DisburseCash(disburser, monitor);
+                    SCB.DisburseCash(disburser, cashBank, monitor);
                     break;
                 case 6:
                     SCB.EjectCard(cardScanner, monitor);
@@ -114,7 +114,7 @@ namespace GUIEnabledATM
                 }
             }
 
-            if (SCB._numInputCount < SCB._numInputs.Length && SCB._numKeysAvailable)
+            if (SCB._numInputCount < SCB._numInputs.Length)
             {
                 for (int i = 0; i < SCB._numScanStatus.Count; ++i)
                 {
@@ -123,31 +123,37 @@ namespace GUIEnabledATM
                     if (SCB._numScanStatus[i].currentScan != SCB._numScanStatus[i].lastScan
                         && SCB._numScanStatus[i].currentScan == 1)
                     {
-                        SCB._numInputs[SCB._numInputCount] = i;
                         SCB._numScanStatus[i] = (SCB._numScanStatus[i].currentScan, SCB._numScanStatus[i].currentScan);
-                        ++SCB._numInputCount;
-                        System.Diagnostics.Debug.WriteLine("Number count is now " + SCB._numInputCount);
+                        
+                        if (SCB._numKeysAvailable)
+                        {
+                            SCB._numInputs[SCB._numInputCount] = i;
+                            ++SCB._numInputCount;
+                            System.Diagnostics.Debug.WriteLine("Number count is now " + SCB._numInputCount);
 
-                        int str = 0;
-                        for (int j = 0; j < SCB._numInputCount; ++j)
-                            str = str * 10 + SCB._numInputs[j];
-                        monitor._port2.Send(str);
+                            int str = 0;
+                            for (int j = 0; j < SCB._numInputCount; ++j)
+                                str = str * 10 + SCB._numInputs[j];
+                            monitor._port2.Send(str);
+                        }
                     }
                 }
             }
 
-            if (SCB._funcKeysAvailable)
+            for (int i = 0; i < SCB._funcScanStatus.Count; ++i)
             {
-                for (int i = 0; i < SCB._funcScanStatus.Count; ++i)
-                {
-                    SCB._funcScanStatus[i] = (SCB._funcScanStatus[i].currentScan, keypad._port1[i].RecvBytes());
+                SCB._funcScanStatus[i] = (SCB._funcScanStatus[i].currentScan, keypad._port1[i].RecvBytes());
 
-                    if (SCB._funcScanStatus[i].currentScan != SCB._funcScanStatus[i].lastScan
-                        && SCB._funcScanStatus[i].currentScan == 1)
+                if (SCB._funcScanStatus[i].currentScan != SCB._funcScanStatus[i].lastScan
+                    && SCB._funcScanStatus[i].currentScan == 1)
+                {
+                    SCB._funcScanStatus[i] = (SCB._funcScanStatus[i].currentScan, SCB._funcScanStatus[i].currentScan);
+                    System.Diagnostics.Debug.WriteLine(((i == 0) ? "CANCEL" : ((i == 1) ? "ENTER" : "CLEAR")) + " key entered.");
+
+
+                    if (SCB._funcKeysAvailable)
                     {
-                        System.Diagnostics.Debug.WriteLine(((i == 0) ? "CANCEL" : ((i == 1) ? "ENTER" : "CLEAR")) + " key entered.");
                         SCB._funcInput = i + 1;
-                        SCB._funcScanStatus[i] = (SCB._funcScanStatus[i].currentScan, SCB._funcScanStatus[i].currentScan);
                     }
                 }
             }

@@ -55,7 +55,7 @@ namespace GUIEnabledATM.InternalDevices
             // i'm not even sure what the hell goes here...
         }
 
-        public void Welcome(PeripheralDevices.Monitor mn, CardScanner sc, Keypad key)
+        public void Welcome(PeripheralDevices.Monitor mn, CardScanner sc)
         {
             mn._port1.Send("Welcome. Please enter your card to begin");
             
@@ -68,7 +68,7 @@ namespace GUIEnabledATM.InternalDevices
             }
         }
 
-        public void CheckPIN(Keypad key, AccountDatabase db, PeripheralDevices.Monitor mn)
+        public void CheckPIN(AccountDatabase db, PeripheralDevices.Monitor mn)
         {
 
             if (_funcInput > 0)
@@ -130,13 +130,14 @@ namespace GUIEnabledATM.InternalDevices
                     }
                 }
 
-                for (int i = 0; i < _numInputs.Length; ++i)
-                    _numInputs[i] = 0;
                 _funcInput = 0;
+                _numInputCount = 0;
+                Array.ForEach(_numInputs, (int x) => { x = 0; });
+                System.Diagnostics.Debug.WriteLine("Just cleared...");
             }
         }
 
-        public void CheckAmount(Keypad key, Monitor mn)
+        public void CheckAmount(Monitor mn)
         {
             if (_funcInput > 0)
             {
@@ -180,9 +181,10 @@ namespace GUIEnabledATM.InternalDevices
                     }
                 }
 
-                for (int i = 0; i < _numInputs.Length; ++i)
-                    _numInputs[i] = 0;
                 _funcInput = 0;
+                _numInputCount = 0;
+                Array.ForEach(_numInputs, (int x) => { x = 0; });
+                System.Diagnostics.Debug.WriteLine("Just cleared...");
             }
         }
 
@@ -201,7 +203,7 @@ namespace GUIEnabledATM.InternalDevices
             }
         }
 
-        public void VerifyCashAvailability(CashBank bank, Monitor mn)
+        public void VerifyCashAvailability(AccountDatabase db, CashBank bank, Monitor mn)
         {
             if (bank.c_total < _requestedAmount)
             {
@@ -210,49 +212,76 @@ namespace GUIEnabledATM.InternalDevices
             }
             else
             {
+                db.Withdraw(_currentUserID, _requestedAmount);
                 System.Diagnostics.Debug.WriteLine("Going to state 6");
                 _procState = 5;
             }
         }
 
-        public void DisburseCash(CashDisburser cdb, Monitor mn)
+        public void DisburseCash(CashDisburser cdb, CashBank cb, Monitor mn)
         {
-            while (_requestedAmount >= 100)
+            while (_requestedAmount >= 100 && cb.c_100bills > 0)
             {
+                cb.c_100bills--;
+                cb.c_total -= 100;
                 cdb._bills.Item5++;
                 _requestedAmount -= 100;
             }
-            while (_requestedAmount >= 50)
+
+            while (_requestedAmount >= 50 && cb.c_50bills > 0)
             {
+                cb.c_50bills--;
+                cb.c_total -= 50;
                 cdb._bills.Item4++;
                 _requestedAmount -= 50;
             }
-            while (_requestedAmount >= 20)
+
+            while (_requestedAmount >= 20 && cb.c_20bills > 0)
             {
+                cb.c_20bills--;
+                cb.c_total -= 20;
                 cdb._bills.Item3++;
                 _requestedAmount -= 20;
             }
-            while (_requestedAmount >= 10)
+
+            while (_requestedAmount >= 10 && cb.c_10bills > 0)
             {
+                cb.c_10bills--;
+                cb.c_total -= 10;
                 cdb._bills.Item2++;
                 _requestedAmount -= 10;
             }
-            while (_requestedAmount >= 5)
+
+            while (_requestedAmount >= 5 && cb.c_5bills > 0)
             {
+                cb.c_5bills--;
+                cb.c_total -= 5;
                 cdb._bills.Item1++;
                 _requestedAmount -= 5;
             }
-            mn._port1.Send("Disbursing cash...");
-            cdb.Disburse();
-            mn._port1.Send("Cash disbursed");
-            _procState = 6;
+
+            if (_waitTimer.isOn)
+            {
+                if (_waitTimer.remTime == 0)
+                {
+                    _procState = 0;
+                    _waitTimer.isOn = false;
+                    System.Diagnostics.Debug.WriteLine("Cash bank now has $" + cb.c_total + " left.");
+                    cdb._bills = (0, 0, 0, 0, 0);
+                    _procState = 6;
+                }
+            }
+
+            else
+            {
+                mn._port3.Send(cdb.Disburse());
+                mn._port1.Send("Cash disbursed.");
+                _waitTimer = (true, 3);
+            }
         }
 
         public void EjectCard(CardScanner sc, Monitor mn)
         {
-            _currentUserID = 0;
-            sc._cardInserted = false;
-
             if (_waitTimer.isOn)
             {
                 if (_waitTimer.remTime == 0)
@@ -265,7 +294,11 @@ namespace GUIEnabledATM.InternalDevices
             else
             {
                 mn._port1.Send("Card ejected");
-                _waitTimer = (true, 6);
+                _currentUserID = 0;
+                _requestedAmount = 0;
+                _currentPINAttempts = 0;
+                sc._cardInserted = false;
+                _waitTimer = (true, 3);
             }
         }
     }

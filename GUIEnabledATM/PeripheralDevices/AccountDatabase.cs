@@ -57,6 +57,15 @@ namespace GUIEnabledATM.PeripheralDevices
             dataHolder[card_id] = (dataHolder[card_id].PIN, balance);
         }
 
+        public void Withdraw(int card_id, int offset)
+        {
+            if (!dataHolder.ContainsKey(card_id))
+            {
+                throw new ArgumentOutOfRangeException("Key passed in card_id argument does not exist");
+            }
+            dataHolder[card_id] = (dataHolder[card_id].PIN, dataHolder[card_id].balance - offset);
+        }
+
         public void Login(int card_id, int card_pin)
         {
             if (!dataHolder.ContainsKey(card_id))

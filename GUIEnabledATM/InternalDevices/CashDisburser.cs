@@ -1,6 +1,7 @@
 ﻿using GUIEnabledATM.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -17,62 +18,42 @@ namespace GUIEnabledATM.InternalDevices
             _bills = (0, 0, 0, 0, 0);
         }
 
-        internal void Disburse()
+        public string Disburse()
         {
-            string str = "";
+            string res = "";
             List<uint> bills_int = new() { _bills.Item1, _bills.Item2, _bills.Item3, _bills.Item4, _bills.Item5 };
+            List<string> strings = new();
 
-            while (bills_int.Count > 0)
+            for (int i = 0; i < bills_int.Count; i++)
             {
-                uint x = bills_int[0];
-
-                if (x != 0)
+                if (bills_int[i] > 0)
                 {
-                    str += x;
-                    int denom = 5 - bills_int.Count;
-                    switch (denom)
-                    {
-                        case 0:
-                            str += " 5";
-                            break;
-                        case 1:
-                            str += " 10";
-                            break;
-                        case 2:
-                            str += " 20";
-                            break;
-                        case 3:
-                            str += " 50";
-                            break;
-                        case 4:
-                            str += " 100";
-                            break;
-                    }
-                    str += "$ bill" + ((x == 1) ? "" : "s");
-                    if (bills_int.Count == 1)
-                    {
-                        str += " omitted.";
-                    }
-                    else
-                    {
-                        str += ",";
-                        if (bills_int.Count == 2)
-                        {
-                            str += " and";
-                        }
-                    }
-                    str += "\n";
+                    string ind = "";
+                    ind += bills_int[i].ToString();
+                    ind += " $";
+                    ind += Convert.ToInt32(Math.Pow(10, i / 3) * (5 * Math.Pow(2, i % 3))).ToString();
+                    ind += ((bills_int[i] > 1) ? " bills" : " bill");
+                    strings.Add(ind);
                 }
-
-                bills_int.RemoveAt(0);
             }
 
-            if (str == "")
+            while (strings.Count > 0)
             {
-                str += "No bills were disbursed.\n";
+                string cur = strings[0];
+                strings.RemoveAt(0);
+
+                res += cur;
+                if (strings.Count > 1) res += ", ";
+                else if (strings.Count == 1) res += " and ";
+                else if (strings.Count == 0) res += " disbursed.\n";
             }
 
-            System.Diagnostics.Debug.WriteLine(str);
+            if (res == "")
+            {
+                res += "No bills were disbursed.\n";
+            }
+
+            return res;
         }
     }
 }
