@@ -198,7 +198,9 @@ namespace GUIEnabledATM
                 while (!SystemShutdown)
                 {
                     ProcessDispatch();
-                } isSafeToShutdown = true;
+                } 
+                
+                isSafeToShutdown = true;
             }
         }
     }
