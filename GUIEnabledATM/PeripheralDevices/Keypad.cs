@@ -13,13 +13,9 @@ namespace GUIEnabledATM.PeripheralDevices
         internal List<Port> _port1;
         // handles number buttons, I guess...
         internal List<Port> _port2;
-        // check whether keypad needs to work at the moment
-        internal bool _keypadAvailable;
 
         public Keypad()
         {
-            _keypadAvailable = false;
-
             _port1 = new List<Port>();
             for (var i = 0; i < 3; ++i)
                 _port1.Add(new Port(0xFF00, false));

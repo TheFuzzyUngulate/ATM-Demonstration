@@ -23,6 +23,8 @@ namespace GUIEnabledATM
     public partial class MainWindow : Window
     {
         internal ATM atm;
+        internal bool hasInterrupted;
+        internal Thread SystemFailureCheckingThread;
 
         public MainWindow()
         {
@@ -37,6 +39,23 @@ namespace GUIEnabledATM
 
             foreach (var key in atm.keypad._port1)
                 key.BytesSent += Update_Screen_ClearNumberDisplay;
+
+            hasInterrupted = false;
+            this.KeyDown += OnKeyDown;
+
+            SystemFailureCheckingThread = new Thread(new ThreadStart(() =>
+            {
+                while (!hasInterrupted) ;
+                atm.SystemFailure();
+            }));
+            SystemFailureCheckingThread.Start();
+        }
+
+        private void OnKeyDown(object src, KeyEventArgs e)
+        {
+            if (e.Key == Key.Q) {
+                hasInterrupted = true;
+            }
         }
 
         private void Update_Screen_ChangeNumberDisplay(object src, EventArgs e)

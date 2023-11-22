@@ -15,12 +15,9 @@ namespace GUIEnabledATM.PeripheralDevices
         internal Port _port2;
         // port to send warning alerts
         internal Port _port3;
-        // boolean to check if on or off, I guess..
-        internal bool _isActive;
 
         public Monitor()
         {
-            _isActive = false;
             _port1 = new Port(0xFD20, true);
             _port2 = new Port(0xFD30, true);
             _port3 = new Port(0xFDFF, true);

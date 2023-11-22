@@ -49,12 +49,6 @@ namespace GUIEnabledATM.InternalDevices
             _funcKeysAvailable = false;
         }
 
-        public void SystemFailure()
-        {
-            // do some stuff here
-            // i'm not even sure what the hell goes here...
-        }
-
         public void Welcome(PeripheralDevices.Monitor mn, CardScanner sc)
         {
             mn._port1.Send("Welcome. Please enter your card to begin");

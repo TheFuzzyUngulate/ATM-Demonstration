@@ -21,8 +21,9 @@ namespace GUIEnabledATM
 
         internal bool SystemInitial;
         internal bool SystemShutdown;
-        internal delegate void Timed100sEventHandler(object src, EventArgs args);
-        System.Timers.Timer s_timer;
+        readonly System.Timers.Timer s_timer;
+
+        internal bool isSafeToShutdown;
 
         public ATM()
         {
@@ -35,15 +36,42 @@ namespace GUIEnabledATM
             clock = new SystemClock();
 
             SCB = new Processor();
-
             SystemInitial = true;
             SystemShutdown = false;
 
-            s_timer = new System.Timers.Timer
-            {
-                Interval = 100
-            };
+            s_timer = new System.Timers.Timer { Interval = 100 };
             s_timer.Start();
+            isSafeToShutdown = false;
+        }
+
+        internal void SystemFailure()
+        {
+            // indicate system shutdown
+            SystemShutdown = true;
+            System.Diagnostics.Debug.WriteLine("Shutting down...");
+            // wait for process dispatch to know, just to be safe
+            while (!isSafeToShutdown) ;
+
+            // show error message
+            monitor._port1.Send("System failed. Shutting down...");
+            monitor._port2.Send("");
+            monitor._port3.Send("");
+
+            // wait for 3 seconds
+            SCB._waitTimer = (true, 3);
+            while (SCB._waitTimer.remTime > 0) ;
+
+            // close timers
+            clock._timers.Clear();
+
+            // dismiss cyclical interrupts
+            s_timer.Close();
+
+            // reset all ports
+            monitor._port1.Send("");
+            keypad._port1.ForEach((Port x) => { x.Send(""); });
+            keypad._port2.ForEach((Port x) => { x.Send(""); });
+            cardScanner._port.Send("");
         }
 
         protected virtual void SystemClock(object? src, System.Timers.ElapsedEventArgs e)
@@ -63,6 +91,7 @@ namespace GUIEnabledATM
                     {
                         SCB._waitTimer = (true, SCB._waitTimer.remTime - 1);
                     }
+                    else SCB._waitTimer.isOn = false;
                 }
 
                 // set current time
@@ -165,13 +194,12 @@ namespace GUIEnabledATM
             {
                 s_timer.Elapsed += new System.Timers.ElapsedEventHandler(SystemClock);
                 s_timer.Elapsed += new System.Timers.ElapsedEventHandler(EventCapture);
-
+                
                 while (!SystemShutdown)
                 {
                     ProcessDispatch();
-                }
+                } isSafeToShutdown = true;
             }
-
         }
     }
 }
