@@ -156,7 +156,7 @@ namespace GUIEnabledATM
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // i knew i didn't add this... well, what can you do ig
+            // default function? i'm new to C# bruh...
         }
     }
 }
