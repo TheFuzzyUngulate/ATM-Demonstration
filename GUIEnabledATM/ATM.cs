@@ -16,8 +16,6 @@ namespace GUIEnabledATM
         public int dataKey;
         public int funcKey;
         public int entry;
-        public int currentAccount;
-        public int withdrawCount;
 
     }
     internal class ATM
@@ -29,10 +27,14 @@ namespace GUIEnabledATM
         internal CashDisburser disburser;
         internal AccountDatabase sysDatabase;
         internal SystemClock clock;
+
+        //these 4 variables and the above structs are meant to represent whats in the SCB
         internal List<DataScan> currentDataScan = new List<DataScan>();
         internal bool currentFuncScan;
         internal bool lastFuncScan;
         internal List <Key> keyList = new List<Key>();
+        public int currentAccount;
+        public int withdrawCount;
 
         internal ATM() { }
 
@@ -75,19 +77,47 @@ namespace GUIEnabledATM
             }
         }
 
-        public void CheckAmount(int amount)
+        public bool DisburseBills(int amount, int denom)
         {
-
-        }
-
-        public void DisburseBills()
-        {
-
+            if(disburser.status == false)
+            {
+                disburser.status = true;
+                if(denom == 0)
+                {
+                    bank.fivesCount = bank.fivesCount - amount;
+                }
+                if(denom == 1)
+                {
+                    bank.tensCount = bank.tensCount - amount;
+                }
+                if(denom == 2)
+                {
+                    bank.twentiesCount = bank.twentiesCount - amount;
+                }
+                if (denom == 3)
+                {
+                    bank.fiftiesCount = bank.fiftiesCount - amount;
+                }
+                if(denom == 4)
+                {
+                    bank.hundredsCount = bank.hundredsCount - amount;
+                }
+                disburser.status = false;
+                disburser.billsDisbursed = true;
+                return true;
+            }
+            else
+            {
+                disburser.billsDisbursed = false;
+                return false;
+            }
+            
         }
 
         public void EjectCard()
         {
-
+            scanner.status = false;
+            Welcome();
         }
 
         public void InputWithdrawAmount()
@@ -96,7 +126,10 @@ namespace GUIEnabledATM
             bool isEmpty = bank.isEmpty;
             if (!isEmpty)
             {
-                disburser.denom = en
+                //this part does not translate nice and I think we're going to have to switch from whats in lab 3
+                //disburser.denom = SCB.entry
+                //disburser.count = SCB.withdrawCount
+                VerifyBalance();
             }
             else
             {
@@ -105,6 +138,7 @@ namespace GUIEnabledATM
             }
         }
 
+        //not sure if we need to implement this one since we are simulating the clock using the system clock
         public void SystemClock()
         {
 
@@ -112,21 +146,55 @@ namespace GUIEnabledATM
 
         public void SystemFailure()
         {
+            monitor.displayText = "ERROR: System Failure";
+            disburser.status = true;
+            scanner.status = false;
+            sysDatabase.maxAllowableWithdraw = 0;
 
         }
 
         public void VerifyBalance()
         {
-
+            if(sysDatabase.getBalance(currentAccount) >= withdrawCount)
+            {
+                if(sysDatabase.getMaxWithdraw(currentAccount) >= withdrawCount)
+                {
+                    VerifyBillsAvailability(withdrawCount);
+                }
+                else
+                {
+                    monitor.displayText = "Withdrawl amount Too large";
+                    EjectCard();
+                }
+            }
+            else
+            {
+                monitor.displayText = "Insufficient funds";
+                EjectCard();
+            }
         }
 
-        public void VerifyBillsAvailability()
+        public void VerifyBillsAvailability(int amount)
         {
-
+            if(amount >= bank.totalCount)
+            {
+                bool success = false;
+                do
+                {
+                    //need to fix this loop/function as it isn't functional to properly disperse bills
+                    success = DisburseBills(amount,0);
+                }
+                while (!success);
+            }
+            else
+            {
+                monitor.displayText = "Insufficient funds";
+                EjectCard();
+            }
         }
         public void Welcome()
         {
-            monitor.displayText = "Welcome. Please etner your card to begin";
+            monitor.displayText = "Welcome. Please enter your card to begin";
             monitor.timeText = clock.GetCurrentTime();
             if(scanner.status == true )
             {

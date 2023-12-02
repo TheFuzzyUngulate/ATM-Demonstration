@@ -38,6 +38,7 @@ namespace GUIEnabledATM.PeripheralDevices
 
         private int databaseSize;
         private List<Account> sysAccount;
+        public int maxAllowableWithdraw;
 
         public AccountDatabase()
         {
@@ -65,7 +66,7 @@ namespace GUIEnabledATM.PeripheralDevices
         {
             foreach (Account account in sysAccount)
             {
-                if (account.accountNum.ToString() == cardNum)
+                if (account.accountNum.ToString().Equals(cardNum))
                 {
                     if (account.accountStatus)
                     {
@@ -75,6 +76,30 @@ namespace GUIEnabledATM.PeripheralDevices
                 }
             }
             return false;
+        }
+
+        public int getBalance(int cardNum)
+        {
+            foreach(Account account in sysAccount)
+            {
+                if (account.accountNum == cardNum)
+                {
+                    return account.balance;
+                }
+            }
+            return -1;
+        }
+
+        public int getMaxWithdraw(int cardNum)
+        {
+            foreach (Account account in sysAccount)
+            {
+                if (account.accountNum == cardNum)
+                {
+                    return account.maxAllowableWithdraw;
+                }
+            }
+            return -1;
         }
     }
 }
