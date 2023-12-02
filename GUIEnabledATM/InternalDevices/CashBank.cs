@@ -8,22 +8,25 @@ namespace GUIEnabledATM.InternalDevices
 {
     internal class CashBank
     {
-        internal int c_total;
-        internal int c_5bills;
-        internal int c_10bills;
-        internal int c_20bills;
-        internal int c_50bills;
-        internal int c_100bills;
+        internal int totalCount;
+        internal int fivesCount;
+        internal int tensCount;
+        internal int twentiesCount;
+        internal int fiftiesCount;
+        internal int hundredsCount;
         internal int _moneyToDisburse;
+        internal bool isEmpty;
 
-        public CashBank() {
-            c_total = 3700;
-            c_5bills = 20;
-            c_10bills = 20;
-            c_20bills = 20;
-            c_50bills = 20;
-            c_100bills = 20;
+        public CashBank()
+        {
+            totalCount = 3700;
+            fivesCount = 20;
+            tensCount = 20;
+            twentiesCount = 20;
+            fiftiesCount = 20;
+            hundredsCount = 20;
             _moneyToDisburse = 0;
+            isEmpty = false;
         }
     }
 }

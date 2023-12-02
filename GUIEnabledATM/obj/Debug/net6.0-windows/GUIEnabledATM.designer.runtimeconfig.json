@@ -12,8 +12,8 @@
       }
     ],
     "additionalProbingPaths": [
-      "C:\\Users\\torch\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\torch\\.nuget\\packages"
+      "C:\\Users\\natc2\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\natc2\\.nuget\\packages"
     ],
     "configProperties": {
       "Microsoft.NETCore.DotNetHostPolicy.SetAppPaths": true

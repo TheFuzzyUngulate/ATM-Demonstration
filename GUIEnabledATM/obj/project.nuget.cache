@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "f7T+oUv/v82956Inj3FO0U71/nQ2ssGqiHYx5V6oWBG4Dw/pgxODmOdPxrvEntE1KaPz2SfsfFugIl721I6JhA==",
+  "dgSpecHash": "2L0Y9KuxgL0u3qJ70RGPewYqTCqzfRJWl0yz/z/MkKSWDFnTx4jBDW8YaL9Z51yZ1rHv/XEMcQIP/TWem5XABw==",
   "success": true,
-  "projectFilePath": "D:\\University of Calgary\\Lectures and Practice\\Fall 2023\\SENG 529\\Tests\\GUIEnabledATM\\GUIEnabledATM\\GUIEnabledATM.csproj",
+  "projectFilePath": "C:\\Users\\natc2\\source\\repos\\ATM-Demonstration\\GUIEnabledATM\\GUIEnabledATM.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

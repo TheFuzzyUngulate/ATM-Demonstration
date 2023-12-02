@@ -8,26 +8,27 @@
     "net6.0-windows7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\torch\\.nuget\\packages\\": {}
+    "C:\\Users\\natc2\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\University of Calgary\\Lectures and Practice\\Fall 2023\\SENG 529\\Tests\\GUIEnabledATM\\GUIEnabledATM\\GUIEnabledATM.csproj",
+      "projectUniqueName": "C:\\Users\\natc2\\Source\\Repos\\ATM-Demonstration\\GUIEnabledATM\\GUIEnabledATM.csproj",
       "projectName": "GUIEnabledATM",
-      "projectPath": "D:\\University of Calgary\\Lectures and Practice\\Fall 2023\\SENG 529\\Tests\\GUIEnabledATM\\GUIEnabledATM\\GUIEnabledATM.csproj",
-      "packagesPath": "C:\\Users\\torch\\.nuget\\packages\\",
-      "outputPath": "D:\\University of Calgary\\Lectures and Practice\\Fall 2023\\SENG 529\\Tests\\GUIEnabledATM\\GUIEnabledATM\\obj\\",
+      "projectPath": "C:\\Users\\natc2\\Source\\Repos\\ATM-Demonstration\\GUIEnabledATM\\GUIEnabledATM.csproj",
+      "packagesPath": "C:\\Users\\natc2\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\natc2\\Source\\Repos\\ATM-Demonstration\\GUIEnabledATM\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\torch\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\natc2\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net6.0-windows"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {}
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net6.0-windows7.0": {
@@ -63,7 +64,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.404\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

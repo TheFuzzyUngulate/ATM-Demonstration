@@ -33,11 +33,11 @@ namespace GUIEnabledATM
             Thread th = new(atm.SysDeployment);
             th.Start();
 
-            atm.monitor._port1.BytesSent += Update_Screen_Content;
-            atm.monitor._port2.BytesSent += Update_Screen_ChangeNumberDisplay;
-            atm.monitor._port3.BytesSent += Update_Screen_WarningDisplay;
+            atm.monitor.port1.BytesSent += Update_Screen_Content;
+            atm.monitor.port2.BytesSent += Update_Screen_ChangeNumberDisplay;
+            atm.monitor.port3.BytesSent += Update_Screen_WarningDisplay;
 
-            foreach (var key in atm.keypad._port1)
+            foreach (var key in atm.keypad.port1)
                 key.BytesSent += Update_Screen_ClearNumberDisplay;
 
             hasInterrupted = false;
@@ -64,7 +64,7 @@ namespace GUIEnabledATM
             {
                 if (atm.SCB._numInputCount > 0)
                 {
-                    int k = atm.monitor._port2.RecvInteger();
+                    int k = atm.monitor.port2.RecvInteger();
                     System.Diagnostics.Debug.WriteLine("Attempting to display PIN: " + k);
                     inputTextBox.Text = k.ToString();
                 }
@@ -93,7 +93,7 @@ namespace GUIEnabledATM
                 {
                     int portNum = Convert.ToInt32(_argStr);
                     System.Diagnostics.Debug.WriteLine("Send signal to button " + portNum);
-                    atm.keypad._port2[portNum].Send((byte)1);
+                    atm.keypad.port2[portNum].Send((byte)1);
                 }
             }
             catch (Exception)
@@ -106,7 +106,7 @@ namespace GUIEnabledATM
         {
             this.Dispatcher.Invoke(() =>
             {
-                trueTextBox.Text = atm.monitor._port1.RecvString();
+                trueTextBox.Text = atm.monitor.port1.RecvString();
             });
         }
 
@@ -114,7 +114,7 @@ namespace GUIEnabledATM
         {
             this.Dispatcher.Invoke(() =>
             {
-                errTextBox.Text = atm.monitor._port3.RecvString();
+                errTextBox.Text = atm.monitor.port3.RecvString();
             });
         }
 
@@ -127,7 +127,7 @@ namespace GUIEnabledATM
                 if (_argStr != null)
                 {
                     int portNum = Convert.ToInt32(_argStr);
-                    atm.keypad._port1[portNum-1].Send((byte)1);
+                    atm.keypad.port1[portNum-1].Send((byte)1);
                 }
             }
             catch (Exception)
@@ -145,7 +145,7 @@ namespace GUIEnabledATM
                 if (_argStr != null)
                 {
                     System.Diagnostics.Debug.WriteLine("About to scan card!");
-                    atm.cardScanner._port.Send(Convert.ToInt32(_argStr));
+                    atm.cardScanner.port.Send(Convert.ToInt32(_argStr));
                 }
             }
             catch (Exception)

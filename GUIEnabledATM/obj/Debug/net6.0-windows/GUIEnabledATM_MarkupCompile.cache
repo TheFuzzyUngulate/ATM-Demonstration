@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\University of Calgary\Lectures and Practice\Fall 2023\SENG 529\Tests\GUIEnabledATM\GUIEnabledATM\obj\Debug\net6.0-windows\
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\
 GUIEnabledATM
 none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
-D:\University of Calgary\Lectures and Practice\Fall 2023\SENG 529\Tests\GUIEnabledATM\GUIEnabledATM\App.xaml
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\App.xaml
 11407045341
 
 131562850270
 194-1977528901
 MainWindow.xaml;
 
-False
+True
 
