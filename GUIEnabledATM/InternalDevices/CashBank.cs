@@ -28,5 +28,30 @@ namespace GUIEnabledATM.InternalDevices
             _moneyToDisburse = 0;
             isEmpty = false;
         }
+
+        //facilitaties dynamic checking of counts
+        public int getCount(int denom)
+        {
+            if(denom == 100)
+            {
+                return hundredsCount;
+            }
+            else if(denom == 50)
+            {
+                return fiftiesCount;
+            }
+            else if (denom == 20)
+            {
+                 return twentiesCount;
+            }
+            else if( denom == 10)
+            {
+                return tensCount;
+            }
+            else
+            {
+                return fivesCount;
+            }
+        }
     }
 }

@@ -174,23 +174,51 @@ namespace GUIEnabledATM
             }
         }
 
+
+        //this function is modified from whats in lab 3 to properly calculate the number of each denom needed
         public void VerifyBillsAvailability(int amount)
         {
+
             if(amount >= bank.totalCount)
             {
-                bool success = false;
-                do
+                //this section calculates the number of each denom to dispense
+                int[] denomination = { 100, 50, 20, 10, 5 };
+                Dictionary<int, int> denomAmount = new Dictionary<int, int>();
+                foreach(int denom in denomination)
                 {
-                    //need to fix this loop/function as it isn't functional to properly disperse bills
-                    success = DisburseBills(amount,0);
+                    int count = amount/denom;
+
+                    if(count > 0 && count <=bank.getCount(denom))
+                    {
+                        denomAmount[denom] = count;
+                        amount %= denom;
+                    }
                 }
-                while (!success);
+
+                if(amount == 0)
+                {
+                    foreach(var denom in denomAmount) 
+                    {
+                        if(denom.Value > 0)
+                        {
+                            bool success = false;
+                            do
+                            {
+                                success = DisburseBills(denom.Value, denom.Key);
+                            }
+                            while (!success);
+                        }
+                    }
+                }
+                
             }
             else
             {
                 monitor.displayText = "Insufficient funds";
                 EjectCard();
             }
+            monitor.displayText = "Insufficient funds";
+            EjectCard();
         }
         public void Welcome()
         {
