@@ -18,7 +18,7 @@ namespace GUIEnabledATM.PeripheralDevices
             this.balance = balance;
             this.maxAllowableWithdraw = maxAllowableWithdraw;
         }
-        
+
 
         public int accountNum { get; set; }
         public bool accountStatus { get; set; }
@@ -44,4 +44,37 @@ namespace GUIEnabledATM.PeripheralDevices
             databaseSize = 0;
             sysAccount = new List<Account>();
         }
+
+        public bool checkPinIsCorrect(string cardNum, int pin)
+        {
+            foreach (Account account in sysAccount)
+            {
+                if(account.accountNum.ToString() == cardNum)
+                {
+                    if (account.pin == pin)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        public bool accountActive(string cardNum)
+        {
+            foreach (Account account in sysAccount)
+            {
+                if (account.accountNum.ToString() == cardNum)
+                {
+                    if (account.accountStatus)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            return false;
+        }
     }
+}
