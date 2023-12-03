@@ -11,7 +11,7 @@ namespace GUIEnabledATM
         public int currentDataScan;
         public int lastDataScan;
     }
-    internal struct Key
+    internal struct Keys
     {
         public int dataKey;
         public int funcKey;
@@ -32,7 +32,7 @@ namespace GUIEnabledATM
         internal List<DataScan> currentDataScan = new List<DataScan>();
         internal bool currentFuncScan;
         internal bool lastFuncScan;
-        internal List <Key> keyList = new List<Key>();
+        internal List <Keys> keyList = new List<Keys>();
         public int currentAccount;
         public int withdrawCount;
 
@@ -54,7 +54,7 @@ namespace GUIEnabledATM
 
         }
 
-        public void SystemDeployment()
+        public void SysDeployment()
         {
 
         }

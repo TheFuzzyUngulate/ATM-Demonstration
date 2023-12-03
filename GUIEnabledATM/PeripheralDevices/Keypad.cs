@@ -9,19 +9,19 @@ namespace GUIEnabledATM.PeripheralDevices
 {
     internal class Keypad
     {
-        internal List<Port> _port1;
+        internal List<Port> port1;
         // handles number buttons, I guess...
-        internal List<Port> _port2;
+        internal List<Port> port2;
 
         public Keypad()
         {
-            _port1 = new List<Port>();
+            port1 = new List<Port>();
             for (var i = 0; i < 3; ++i)
-                _port1.Add(new Port(0xFF00, false));
+                port1.Add(new Port(0xFF00, i));
 
-            _port2 = new List<Port>();
+            port2 = new List<Port>();
             for (var i = 0; i < 10; ++i)
-                _port2.Add(new Port(0xFF00, false));
+                port2.Add(new Port(0xFF00, i));
         }
     }
 }

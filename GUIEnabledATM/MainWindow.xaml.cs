@@ -33,12 +33,12 @@ namespace GUIEnabledATM
             Thread th = new(atm.SysDeployment);
             th.Start();
 
-            atm.monitor.port1.BytesSent += Update_Screen_Content;
-            atm.monitor.port2.BytesSent += Update_Screen_ChangeNumberDisplay;
-            atm.monitor.port3.BytesSent += Update_Screen_WarningDisplay;
+            atm.monitor.PropertyChanged += Update_Screen_Content;
+            //atm.monitor.port2.BytesSent += Update_Screen_ChangeNumberDisplay;
+            atm.monitor.TimeChanged += Update_Screen_WarningDisplay;
 
-            foreach (var key in atm.keypad.port1)
-                key.BytesSent += Update_Screen_ClearNumberDisplay;
+            //foreach (var key in atm.keypad.port1)
+                //key.BytesSent += Update_Screen_ClearNumberDisplay;
 
             hasInterrupted = false;
             this.KeyDown += OnKeyDown;
@@ -58,6 +58,7 @@ namespace GUIEnabledATM
             }
         }
 
+        /*
         private void Update_Screen_ChangeNumberDisplay(object src, EventArgs e)
         {
             this.Dispatcher.Invoke(() =>
@@ -73,7 +74,7 @@ namespace GUIEnabledATM
                     inputTextBox.Text = "";
                 }
             });
-        }
+        }*/
 
         private void Update_Screen_ClearNumberDisplay(object src, EventArgs e)
         {
@@ -106,7 +107,7 @@ namespace GUIEnabledATM
         {
             this.Dispatcher.Invoke(() =>
             {
-                trueTextBox.Text = atm.monitor.port1.RecvString();
+                trueTextBox.Text = atm.monitor.displayText;
             });
         }
 
@@ -114,7 +115,7 @@ namespace GUIEnabledATM
         {
             this.Dispatcher.Invoke(() =>
             {
-                errTextBox.Text = atm.monitor.port3.RecvString();
+                errTextBox.Text = atm.monitor.timeText;
             });
         }
 
@@ -145,7 +146,7 @@ namespace GUIEnabledATM
                 if (_argStr != null)
                 {
                     System.Diagnostics.Debug.WriteLine("About to scan card!");
-                    atm.cardScanner.port.Send(Convert.ToInt32(_argStr));
+                    atm.scanner.cardNum =_argStr;
                 }
             }
             catch (Exception)
