@@ -3,6 +3,7 @@ using GUIEnabledATM.Utilities;
 using System.Collections.Generic;
 using GUIEnabledATM.InternalDevices;
 using GUIEnabledATM.PeripheralDevices;
+using System.Diagnostics;
 
 namespace GUIEnabledATM
 {
@@ -28,30 +29,47 @@ namespace GUIEnabledATM
         internal AccountDatabase sysDatabase;
         internal SystemClock clock;
 
-        //these 4 variables and the above structs are meant to represent whats in the SCB
+        //these 4 variables and the above structs are meant to represent whats in the keypad
         internal List<DataScan> currentDataScan = new List<DataScan>();
         internal bool currentFuncScan;
         internal bool lastFuncScan;
         internal List <Keys> keyList = new List<Keys>();
         public int currentAccount;
         public int withdrawCount;
+        public int withdrawDenom;
+        public int withdrawNum;
 
 
-        //missing from SCB in lab 3 but probably should be included
+        //missing from keypad in lab 3 but probably should be included
         internal bool SystemInitial;
         internal bool SystemShutdown;
         readonly System.Timers.Timer s_timer;
 
         internal bool isSafeToShutdown;
 
-        internal ATM() { }
+        internal int _procState;
+
+        internal ATM() {
+            scanner = new();
+            keypad = new Keypad();
+            monitor = new();
+            sysDatabase = new();
+            bank = new CashBank();
+            disburser = new CashDisburser();
+            clock = new SystemClock();
+
+            //SCB = new Processor();
+            SystemInitial = true;
+            SystemShutdown = false;
+
+            s_timer = new System.Timers.Timer { Interval = 100 };
+            s_timer.Start();
+            isSafeToShutdown = false;
+        }
 
 
         //the following block might need to go into another class
-        public void SysInitial()
-        {
-
-        }
+        
 
         public void EventCapture(object? src, System.Timers.ElapsedEventArgs e)
         {
@@ -65,53 +83,83 @@ namespace GUIEnabledATM
                     scanner.status = true;
                 }
             }
-            if (SCB._numInputCount < SCB._numInputs.Length)
+            if (keypad._numInputCount < keypad._numInputs.Length)
             {
-                for (int i = 0; i < SCB._numScanStatus.Count; ++i)
+                for (int i = 0; i < keypad._numScanStatus.Count; ++i)
                 {
-                    SCB._numScanStatus[i] = (SCB._numScanStatus[i].currentScan, keypad._port2[i].RecvBytes());
+                    keypad._numScanStatus[i] = (keypad._numScanStatus[i].currentScan, keypad.port2[i]._input);
 
-                    if (SCB._numScanStatus[i].currentScan != SCB._numScanStatus[i].lastScan
-                        && SCB._numScanStatus[i].currentScan == 1)
+                    if (keypad._numScanStatus[i].currentScan != keypad._numScanStatus[i].lastScan
+                        && keypad._numScanStatus[i].currentScan == 1)
                     {
-                        SCB._numScanStatus[i] = (SCB._numScanStatus[i].currentScan, SCB._numScanStatus[i].currentScan);
+                        keypad._numScanStatus[i] = (keypad._numScanStatus[i].currentScan, keypad._numScanStatus[i].currentScan);
 
-                        if (SCB._numKeysAvailable)
+                        if (keypad._numKeysAvailable)
                         {
-                            SCB._numInputs[SCB._numInputCount] = i;
-                            ++SCB._numInputCount;
-                            System.Diagnostics.Debug.WriteLine("Number count is now " + SCB._numInputCount);
+                            keypad._numInputs[keypad._numInputCount] = i;
+                            ++keypad._numInputCount;
+                            System.Diagnostics.Debug.WriteLine("Number count is now " + keypad._numInputCount);
 
                             int str = 0;
-                            for (int j = 0; j < SCB._numInputCount; ++j)
-                                str = str * 10 + SCB._numInputs[j];
-                            monitor._port2.Send(str);
+                            for (int j = 0; j < keypad._numInputCount; ++j)
+                                str = str * 10 + keypad._numInputs[j];
+                            //monitor._port2.Send(str);
                         }
                     }
                 }
             }
 
-            for (int i = 0; i < SCB._funcScanStatus.Count; ++i)
+            for (int i = 0; i < keypad._funcScanStatus.Count; ++i)
             {
-                SCB._funcScanStatus[i] = (SCB._funcScanStatus[i].currentScan, keypad._port1[i].RecvBytes());
+                keypad._funcScanStatus[i] = (keypad._funcScanStatus[i].currentScan, keypad.port1[i]._input);
 
-                if (SCB._funcScanStatus[i].currentScan != SCB._funcScanStatus[i].lastScan
-                    && SCB._funcScanStatus[i].currentScan == 1)
+                if (keypad._funcScanStatus[i].currentScan != keypad._funcScanStatus[i].lastScan
+                    && keypad._funcScanStatus[i].currentScan == 1)
                 {
-                    SCB._funcScanStatus[i] = (SCB._funcScanStatus[i].currentScan, SCB._funcScanStatus[i].currentScan);
+                    keypad._funcScanStatus[i] = (keypad._funcScanStatus[i].currentScan, keypad._funcScanStatus[i].currentScan);
                     System.Diagnostics.Debug.WriteLine(((i == 0) ? "CANCEL" : ((i == 1) ? "ENTER" : "CLEAR")) + " key entered.");
 
 
-                    if (SCB._funcKeysAvailable)
+                    if (keypad._funcKeysAvailable)
                     {
-                        SCB._funcInput = i + 1;
+                        keypad._funcInput = i + 1;
                     }
                 }
             }
         }
         public void SystemDispatch()
         {
-            Welcome();
+            switch (_procState)
+            {
+                case 0:
+                    Welcome();
+                    break;
+                case 1:
+                    if (keypad._funcInput == 2)
+                    {
+                        int in_pin = keypad._numInputs[3]
+                                           + keypad._numInputs[2] * 10
+                                           + keypad._numInputs[1] * 100
+                                           + keypad._numInputs[0] * 1000;
+                        CheckPin(in_pin);
+                    }
+                    break;
+                case 2:
+                    InputWithdrawAmount();
+                    break;
+                case 3:
+                    VerifyBalance();
+                    break;
+                case 4:
+                    VerifyBillsAvailability(withdrawCount);
+                    break;
+                case 5:
+                    DisburseBills(withdrawNum,withdrawDenom);
+                    break;
+                case 6:
+                    EjectCard();
+                    break;
+            }
         }
 
         public void SysDeployment()
@@ -143,7 +191,7 @@ namespace GUIEnabledATM
             else
             {
                 monitor.displayText = "PIN OK";
-                Welcome();
+                _procState = 0;
             }
         }
 
@@ -174,11 +222,13 @@ namespace GUIEnabledATM
                 }
                 disburser.status = false;
                 disburser.billsDisbursed = true;
+                _procState = 4;
                 return true;
             }
             else
             {
                 disburser.billsDisbursed = false;
+                _procState = 4;
                 return false;
             }
             
@@ -187,7 +237,7 @@ namespace GUIEnabledATM
         public void EjectCard()
         {
             scanner.status = false;
-            Welcome();
+            _procState = 0;
         }
 
         public void InputWithdrawAmount()
@@ -197,14 +247,45 @@ namespace GUIEnabledATM
             if (!isEmpty)
             {
                 //this part does not translate nice and I think we're going to have to switch from whats in lab 3
-                //disburser.denom = SCB.entry
-                //disburser.count = SCB.withdrawCount
-                VerifyBalance();
-            }
-            else
-            {
-                monitor.displayText = "ATM has no cash";
-                Welcome() ;
+                //disburser.denom = keypad.entry
+                //disburser.count = keypad.withdrawCount
+                if (keypad._funcInput == 2)
+                {
+                    if (keypad._numInputCount > 0)
+                    {
+                        int reqAmount = 0;
+                        for (var i = 0; i < keypad._numInputCount; i++)
+                        {
+                            reqAmount += keypad._numInputs[i] * (int)(Math.Pow(10, (keypad._numInputCount - i - 1)));
+                        }
+
+                        if (reqAmount == 0)
+                        {
+                            monitor.displayText = "Can't withdraw less than 5 dollars";
+                        }
+                        else
+                        {
+                            monitor.displayText = "";
+
+
+                            keypad._numKeysAvailable = false;
+                            keypad._funcKeysAvailable = false;
+                            withdrawCount = reqAmount;
+                            _procState = 3;
+
+                        }
+                    }
+                    else
+                    {
+                        monitor.displayText = "Amount not specified";
+                    }
+
+                }
+                else
+                {
+                    monitor.displayText = "ATM has no cash";
+                    _procState = 0;
+                }
             }
         }
 
@@ -229,18 +310,18 @@ namespace GUIEnabledATM
             {
                 if(sysDatabase.getMaxWithdraw(currentAccount) >= withdrawCount)
                 {
-                    VerifyBillsAvailability(withdrawCount);
+                    _procState = 4;
                 }
                 else
                 {
                     monitor.displayText = "Withdrawl amount Too large";
-                    EjectCard();
+                    _procState = 6;
                 }
             }
             else
             {
                 monitor.displayText = "Insufficient funds";
-                EjectCard();
+                _procState = 6;
             }
         }
 
@@ -274,21 +355,24 @@ namespace GUIEnabledATM
                             bool success = false;
                             do
                             {
-                                success = DisburseBills(denom.Value, denom.Key);
+                                withdrawDenom = denom.Value;
+                                withdrawNum = denom.Key;
+                                _procState = 5;
                             }
                             while (!success);
                         }
                     }
                 }
+                _procState = 6;
                 
             }
             else
             {
                 monitor.displayText = "Insufficient funds";
-                EjectCard();
+                _procState = 6;
             }
             monitor.displayText = "Insufficient funds";
-            EjectCard();
+            _procState = 6;
         }
         public void Welcome()
         {

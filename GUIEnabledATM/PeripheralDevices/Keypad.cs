@@ -13,6 +13,13 @@ namespace GUIEnabledATM.PeripheralDevices
         // handles number buttons, I guess...
         internal List<Port> port2;
 
+        internal int _funcInput;
+        internal int[] _numInputs;
+        internal int _numInputCount;
+        internal List<(int lastScan, int currentScan)> _numScanStatus;
+        internal List<(int lastScan, int currentScan)> _funcScanStatus;
+        internal bool _funcKeysAvailable, _numKeysAvailable;
+
         public Keypad()
         {
             port1 = new List<Port>();

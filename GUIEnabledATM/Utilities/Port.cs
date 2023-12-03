@@ -9,12 +9,12 @@ namespace GUIEnabledATM.Utilities
     internal class Port
     {
         internal ushort _address;
-        internal int _value;
+        internal int _input;
 
         public Port(ushort addr, int value)
         {
             _address = addr;
-            _value = value;
+            _input = value;
         }
     }
 }

@@ -18,3 +18,24 @@ D:\University of Calgary\Lectures and Practice\Fall 2023\SENG 529\Tests\GUIEnabl
 D:\University of Calgary\Lectures and Practice\Fall 2023\SENG 529\Tests\GUIEnabledATM\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.pdb
 D:\University of Calgary\Lectures and Practice\Fall 2023\SENG 529\Tests\GUIEnabledATM\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.genruntimeconfig.cache
 D:\University of Calgary\Lectures and Practice\Fall 2023\SENG 529\Tests\GUIEnabledATM\GUIEnabledATM\obj\Debug\net6.0-windows\ref\GUIEnabledATM.dll
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\bin\Debug\net6.0-windows\GUIEnabledATM.exe
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\bin\Debug\net6.0-windows\GUIEnabledATM.deps.json
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\bin\Debug\net6.0-windows\GUIEnabledATM.runtimeconfig.json
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\bin\Debug\net6.0-windows\GUIEnabledATM.dll
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\bin\Debug\net6.0-windows\GUIEnabledATM.pdb
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\MainWindow.g.cs
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\App.g.cs
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM_MarkupCompile.cache
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM_MarkupCompile.lref
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\MainWindow.baml
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.g.resources
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.AssemblyInfoInputs.cache
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.AssemblyInfo.cs
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.csproj.CoreCompileInputs.cache
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.sourcelink.json
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.dll
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\refint\GUIEnabledATM.dll
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.pdb
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\GUIEnabledATM.genruntimeconfig.cache
+C:\Users\natc2\source\repos\ATM-Demonstration\GUIEnabledATM\obj\Debug\net6.0-windows\ref\GUIEnabledATM.dll
