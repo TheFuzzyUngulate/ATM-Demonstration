@@ -36,6 +36,14 @@ namespace GUIEnabledATM
         public int currentAccount;
         public int withdrawCount;
 
+
+        //missing from SCB in lab 3 but probably should be included
+        internal bool SystemInitial;
+        internal bool SystemShutdown;
+        readonly System.Timers.Timer s_timer;
+
+        internal bool isSafeToShutdown;
+
         internal ATM() { }
 
 
@@ -45,18 +53,80 @@ namespace GUIEnabledATM
 
         }
 
-        public void EventCapture()
+        public void EventCapture(object? src, System.Timers.ElapsedEventArgs e)
         {
+            monitor.timeText = clock.GetCurrentTime();
+            if (!scanner.status)
+            {
+                int uID = int.Parse(scanner.cardNum);
+                if (uID > 0)
+                {
+                    currentAccount = uID;
+                    scanner.status = true;
+                }
+            }
+            if (SCB._numInputCount < SCB._numInputs.Length)
+            {
+                for (int i = 0; i < SCB._numScanStatus.Count; ++i)
+                {
+                    SCB._numScanStatus[i] = (SCB._numScanStatus[i].currentScan, keypad._port2[i].RecvBytes());
 
+                    if (SCB._numScanStatus[i].currentScan != SCB._numScanStatus[i].lastScan
+                        && SCB._numScanStatus[i].currentScan == 1)
+                    {
+                        SCB._numScanStatus[i] = (SCB._numScanStatus[i].currentScan, SCB._numScanStatus[i].currentScan);
+
+                        if (SCB._numKeysAvailable)
+                        {
+                            SCB._numInputs[SCB._numInputCount] = i;
+                            ++SCB._numInputCount;
+                            System.Diagnostics.Debug.WriteLine("Number count is now " + SCB._numInputCount);
+
+                            int str = 0;
+                            for (int j = 0; j < SCB._numInputCount; ++j)
+                                str = str * 10 + SCB._numInputs[j];
+                            monitor._port2.Send(str);
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < SCB._funcScanStatus.Count; ++i)
+            {
+                SCB._funcScanStatus[i] = (SCB._funcScanStatus[i].currentScan, keypad._port1[i].RecvBytes());
+
+                if (SCB._funcScanStatus[i].currentScan != SCB._funcScanStatus[i].lastScan
+                    && SCB._funcScanStatus[i].currentScan == 1)
+                {
+                    SCB._funcScanStatus[i] = (SCB._funcScanStatus[i].currentScan, SCB._funcScanStatus[i].currentScan);
+                    System.Diagnostics.Debug.WriteLine(((i == 0) ? "CANCEL" : ((i == 1) ? "ENTER" : "CLEAR")) + " key entered.");
+
+
+                    if (SCB._funcKeysAvailable)
+                    {
+                        SCB._funcInput = i + 1;
+                    }
+                }
+            }
         }
         public void SystemDispatch()
         {
-
+            Welcome();
         }
 
         public void SysDeployment()
         {
+            if (SystemInitial)
+            {
+                s_timer.Elapsed += new System.Timers.ElapsedEventHandler(EventCapture);
 
+                while (!SystemShutdown)
+                {
+                    SystemDispatch();
+                }
+
+                isSafeToShutdown = true;
+            }
         }
         //end of block
 
