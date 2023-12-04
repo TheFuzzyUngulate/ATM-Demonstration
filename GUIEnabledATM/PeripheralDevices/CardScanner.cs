@@ -13,6 +13,11 @@ namespace GUIEnabledATM.PeripheralDevices
         internal Port port;
         internal string cardNum;
         internal string cardHolder;
+
+        public CardScanner()
+        {
+            cardNum = "0";
+        }
        
     }
 }
