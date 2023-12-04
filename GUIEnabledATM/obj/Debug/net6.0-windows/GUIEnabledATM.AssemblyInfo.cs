@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GUIEnabledATM")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+09fda356289991f35295e36c12778b74342ea23c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+772e203349e7c4eaa118a7358db45ca75be20070")]
 [assembly: System.Reflection.AssemblyProductAttribute("GUIEnabledATM")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GUIEnabledATM")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

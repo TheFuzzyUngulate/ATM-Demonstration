@@ -185,12 +185,12 @@ namespace GUIEnabledATM
             bool pinCorrect = sysDatabase.checkPinIsCorrect(cardNum, i);
             bool accountActive = sysDatabase.accountActive(cardNum);
             if (accountActive && pinCorrect) {
-                monitor.displayText = "PIN OK";
+                monitor.setDisplayText("PIN OK");
                 InputWithdrawAmount();
             }
             else
             {
-                monitor.displayText = "PIN OK";
+                monitor.setDisplayText("PIN NOT OK");
                 _procState = 0;
             }
         }
@@ -242,7 +242,7 @@ namespace GUIEnabledATM
 
         public void InputWithdrawAmount()
         {
-            monitor.displayText = "Please select your amount";
+            monitor.setDisplayText("Please select your amount");
             bool isEmpty = bank.isEmpty;
             if (!isEmpty)
             {
@@ -261,11 +261,11 @@ namespace GUIEnabledATM
 
                         if (reqAmount == 0)
                         {
-                            monitor.displayText = "Can't withdraw less than 5 dollars";
+                            monitor.setDisplayText("Can't withdraw less than 5 dollars");
                         }
                         else
                         {
-                            monitor.displayText = "";
+                            monitor.setDisplayText("");
 
 
                             keypad._numKeysAvailable = false;
@@ -277,7 +277,7 @@ namespace GUIEnabledATM
                     }
                     else
                     {
-                        monitor.displayText = "Amount not specified";
+                        monitor.setDisplayText("Amount not specified");
                     }
 
                 }
@@ -314,13 +314,13 @@ namespace GUIEnabledATM
                 }
                 else
                 {
-                    monitor.displayText = "Withdrawl amount Too large";
+                    monitor.setDisplayText("Withdrawl amount Too large");
                     _procState = 6;
                 }
             }
             else
             {
-                monitor.displayText = "Insufficient funds";
+                monitor.setDisplayText("Insufficient funds");
                 _procState = 6;
             }
         }
@@ -368,19 +368,19 @@ namespace GUIEnabledATM
             }
             else
             {
-                monitor.displayText = "Insufficient funds";
+                monitor.setDisplayText("Insufficient funds");
                 _procState = 6;
             }
-            monitor.displayText = "Insufficient funds";
+            monitor.setDisplayText("Insufficient funds");
             _procState = 6;
         }
         public void Welcome()
         {
-            monitor.displayText = "Welcome. Please enter your card to begin";
-            monitor.timeText = clock.GetCurrentTime();
+            monitor.setDisplayText("Welcome. Please enter your card to begin");
+            monitor.setTimeText(clock.GetCurrentTime());
             if(scanner.status == true )
             {
-                monitor.displayText = "Please enter your pin";
+                monitor.setDisplayText( "Please enter your pin");
             }
         }
     }
