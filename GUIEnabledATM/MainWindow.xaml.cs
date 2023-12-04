@@ -35,13 +35,12 @@ namespace GUIEnabledATM
 
             atm.monitor.PropertyChanged += Update_Screen_Content;
             //atm.monitor.port2.BytesSent += Update_Screen_ChangeNumberDisplay;
-            atm.monitor.TimeChanged += Update_Screen_WarningDisplay;
 
             //foreach (var key in atm.keypad.port1)
                 //key.BytesSent += Update_Screen_ClearNumberDisplay;
 
             hasInterrupted = false;
-            this.KeyDown += OnKeyDown;
+            //KeyDown += OnKeyDown;
 
             SystemFailureCheckingThread = new Thread(new ThreadStart(() =>
             {
@@ -76,13 +75,13 @@ namespace GUIEnabledATM
             });
         }*/
 
-        private void Update_Screen_ClearNumberDisplay(object src, EventArgs e)
+        /*private void Update_Screen_ClearNumberDisplay(object src, EventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
                 inputTextBox.Text = "";
             });
-        }
+        }*/
 
         private void Keypad_Button_Click(object src, RoutedEventArgs e)
         {
@@ -94,7 +93,7 @@ namespace GUIEnabledATM
                 {
                     int portNum = Convert.ToInt32(_argStr);
                     System.Diagnostics.Debug.WriteLine("Send signal to button " + portNum);
-                    atm.keypad.port2[portNum].Send((byte)1);
+                    atm.keypad.port2[portNum]._input = 1;
                 }
             }
             catch (Exception)
@@ -108,6 +107,7 @@ namespace GUIEnabledATM
             this.Dispatcher.Invoke(() =>
             {
                 trueTextBox.Text = atm.monitor.displayText;
+                errTextBox.Text = atm.monitor.timeText;
             });
         }
 
@@ -128,7 +128,7 @@ namespace GUIEnabledATM
                 if (_argStr != null)
                 {
                     int portNum = Convert.ToInt32(_argStr);
-                    atm.keypad.port1[portNum-1].Send((byte)1);
+                    atm.keypad.port1[portNum-1]._input =1;
                 }
             }
             catch (Exception)

@@ -44,6 +44,7 @@ namespace GUIEnabledATM.PeripheralDevices
         {
             databaseSize = 0;
             sysAccount = new List<Account>();
+            sysAccount.Add(new Account(1, true, 1234, "Kaitlin", 1000, 500));
         }
 
         public bool checkPinIsCorrect(string cardNum, int pin)

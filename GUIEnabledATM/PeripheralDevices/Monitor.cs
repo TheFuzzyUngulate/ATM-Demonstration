@@ -25,7 +25,7 @@ namespace GUIEnabledATM.PeripheralDevices
             set
             {
                 timeText = value;
-                OnTimeChanged(timeText);
+                OnPropertyChanged(timeText);
             }
         }
         internal Int32 monitorAddr;
@@ -42,11 +42,6 @@ namespace GUIEnabledATM.PeripheralDevices
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public event PropertyChangedEventHandler TimeChanged;
-
-        protected virtual void OnTimeChanged(string propertyName)
-        {
-           TimeChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        
     }
 }
