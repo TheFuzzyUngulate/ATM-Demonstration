@@ -27,8 +27,11 @@ namespace GUIEnabledATM.PeripheralDevices
         }
         public void setDisplayText(string value)
         {
-            displayText = value;
-            OnPropertyChanged(displayText);
+            if (displayText != value)
+            {
+                displayText = value;
+                OnPropertyChanged(displayText);
+            }
         }
 
         public string getTimeText()
@@ -37,8 +40,11 @@ namespace GUIEnabledATM.PeripheralDevices
         }
         public void setTimeText(string value)
         {
-            displayText = value;
-            OnPropertyChanged(timeText);
+            if (timeText != value)
+            {
+                timeText = value;
+                OnPropertyChanged(timeText);
+            }
         }
 
 

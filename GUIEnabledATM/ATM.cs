@@ -73,7 +73,7 @@ namespace GUIEnabledATM
 
         public void EventCapture(object? src, System.Timers.ElapsedEventArgs e)
         {
-            monitor.timeText = clock.GetCurrentTime();
+            monitor.setTimeText(clock.GetCurrentTime());
             if (!scanner.status)
             {
                 int uID = int.Parse(scanner.cardNum);
@@ -135,8 +135,10 @@ namespace GUIEnabledATM
                     Welcome();
                     break;
                 case 1:
-                    if (keypad._funcInput == 2)
+                    
+                    if (keypad._funcInput == 1)
                     {
+                        System.Diagnostics.Debug.WriteLine("keypad funcinput is:" + keypad._funcInput);
                         int in_pin = keypad._numInputs[3]
                                            + keypad._numInputs[2] * 10
                                            + keypad._numInputs[1] * 100
@@ -283,7 +285,7 @@ namespace GUIEnabledATM
                 }
                 else
                 {
-                    monitor.displayText = "ATM has no cash";
+                    monitor.setDisplayText( "ATM has no cash");
                     _procState = 0;
                 }
             }
@@ -297,7 +299,7 @@ namespace GUIEnabledATM
 
         public void SystemFailure()
         {
-            monitor.displayText = "ERROR: System Failure";
+            monitor.setDisplayText("ERROR: System Failure");
             disburser.status = true;
             scanner.status = false;
             sysDatabase.maxAllowableWithdraw = 0;
@@ -377,10 +379,10 @@ namespace GUIEnabledATM
         public void Welcome()
         {
             monitor.setDisplayText("Welcome. Please enter your card to begin");
-            monitor.setTimeText(clock.GetCurrentTime());
             if(scanner.status == true )
             {
                 monitor.setDisplayText( "Please enter your pin");
+                _procState = 1;
             }
         }
     }
