@@ -163,9 +163,6 @@ namespace GUIEnabledATM
                 case 4:
                     VerifyBillsAvailability(withdrawCount);
                     break;
-                case 5:
-                    DisburseBills(withdrawNum,withdrawDenom);
-                    break;
                 case 6:
                     EjectCard();
                     break;
