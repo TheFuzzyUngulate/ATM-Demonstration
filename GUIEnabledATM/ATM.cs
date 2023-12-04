@@ -62,7 +62,7 @@ namespace GUIEnabledATM
             SystemInitial = true;
             SystemShutdown = false;
 
-            s_timer = new System.Timers.Timer { Interval = 100 };
+            s_timer = new System.Timers.Timer { Interval = 1000 };
             s_timer.Start();
             isSafeToShutdown = false;
         }
@@ -106,25 +106,31 @@ namespace GUIEnabledATM
                             //monitor._port2.Send(str);
                         }
                     }
+                    keypad.port2[i]._input = 0;
                 }
             }
 
             for (int i = 0; i < keypad._funcScanStatus.Count; ++i)
             {
                 keypad._funcScanStatus[i] = (keypad._funcScanStatus[i].currentScan, keypad.port1[i]._input);
-
+                //System.Diagnostics.Debug.WriteLine("key " + i + keypad._funcScanStatus[i].ToString());
                 if (keypad._funcScanStatus[i].currentScan != keypad._funcScanStatus[i].lastScan
                     && keypad._funcScanStatus[i].currentScan == 1)
                 {
                     keypad._funcScanStatus[i] = (keypad._funcScanStatus[i].currentScan, keypad._funcScanStatus[i].currentScan);
+                    //System.Diagnostics.Debug.WriteLine(i);
                     System.Diagnostics.Debug.WriteLine(((i == 0) ? "CANCEL" : ((i == 1) ? "ENTER" : "CLEAR")) + " key entered.");
-
+                    System.Diagnostics.Debug.WriteLine(keypad._funcInput);
+                   // keypad._funcInput = i;
 
                     if (keypad._funcKeysAvailable)
                     {
                         keypad._funcInput = i + 1;
+                        System.Diagnostics.Debug.WriteLine(keypad._funcInput);
                     }
                 }
+
+                keypad.port1[i]._input = 0;
             }
         }
         public void SystemDispatch()
@@ -136,13 +142,15 @@ namespace GUIEnabledATM
                     break;
                 case 1:
                     
-                    if (keypad._funcInput == 1)
+                    if (keypad._funcInput == 2)
                     {
+                        keypad._funcInput = 0;
                         System.Diagnostics.Debug.WriteLine("keypad funcinput is:" + keypad._funcInput);
                         int in_pin = keypad._numInputs[3]
                                            + keypad._numInputs[2] * 10
                                            + keypad._numInputs[1] * 100
                                            + keypad._numInputs[0] * 1000;
+                        System.Diagnostics.Debug.WriteLine("keypad input is:" + in_pin);
                         CheckPin(in_pin);
                     }
                     break;
@@ -182,13 +190,18 @@ namespace GUIEnabledATM
 
         public void CheckPin(int pinNum)
         {
+            System.Diagnostics.Debug.WriteLine("Hits check pin");
             int i = pinNum;
             string cardNum = scanner.cardNum;
+            System.Diagnostics.Debug.WriteLine("card " + cardNum);
             bool pinCorrect = sysDatabase.checkPinIsCorrect(cardNum, i);
+            System.Diagnostics.Debug.WriteLine("pin correct " +pinCorrect);
             bool accountActive = sysDatabase.accountActive(cardNum);
+            System.Diagnostics.Debug.WriteLine("account active" + accountActive);
             if (accountActive && pinCorrect) {
                 monitor.setDisplayText("PIN OK");
-                InputWithdrawAmount();
+                keypad._numInputCount = 0;
+                _procState = 2;
             }
             else
             {
@@ -199,8 +212,10 @@ namespace GUIEnabledATM
 
         public bool DisburseBills(int amount, int denom)
         {
-            if(disburser.status == false)
+            System.Diagnostics.Debug.WriteLine("Top of disburse bills");
+            if (disburser.status == false)
             {
+                System.Diagnostics.Debug.WriteLine("start to disburse");
                 disburser.status = true;
                 if(denom == 0)
                 {
@@ -225,6 +240,7 @@ namespace GUIEnabledATM
                 disburser.status = false;
                 disburser.billsDisbursed = true;
                 _procState = 4;
+                System.Diagnostics.Debug.WriteLine("end of disburse");
                 return true;
             }
             else
@@ -239,6 +255,7 @@ namespace GUIEnabledATM
         public void EjectCard()
         {
             scanner.status = false;
+            scanner.cardNum = "0";
             _procState = 0;
         }
 
@@ -273,6 +290,7 @@ namespace GUIEnabledATM
                             keypad._numKeysAvailable = false;
                             keypad._funcKeysAvailable = false;
                             withdrawCount = reqAmount;
+                            System.Diagnostics.Debug.WriteLine("Withdraw requested is  " + withdrawCount);
                             _procState = 3;
 
                         }
@@ -283,11 +301,11 @@ namespace GUIEnabledATM
                     }
 
                 }
-                else
-                {
-                    monitor.setDisplayText( "ATM has no cash");
-                    _procState = 0;
-                }
+            }
+            else
+            {
+                monitor.setDisplayText("ATM has no cash");
+                _procState = 0;
             }
         }
 
@@ -308,7 +326,9 @@ namespace GUIEnabledATM
 
         public void VerifyBalance()
         {
-            if(sysDatabase.getBalance(currentAccount) >= withdrawCount)
+            System.Diagnostics.Debug.WriteLine("balance " + sysDatabase.getBalance(currentAccount));
+            System.Diagnostics.Debug.WriteLine("withdrawcount " +withdrawCount);
+            if (sysDatabase.getBalance(currentAccount) >= withdrawCount)
             {
                 if(sysDatabase.getMaxWithdraw(currentAccount) >= withdrawCount)
                 {
@@ -332,7 +352,8 @@ namespace GUIEnabledATM
         public void VerifyBillsAvailability(int amount)
         {
 
-            if(amount >= bank.totalCount)
+            System.Diagnostics.Debug.WriteLine("Top of verify bills");
+            if(amount < bank.totalCount)
             {
                 //this section calculates the number of each denom to dispense
                 int[] denomination = { 100, 50, 20, 10, 5 };
@@ -347,21 +368,18 @@ namespace GUIEnabledATM
                         amount %= denom;
                     }
                 }
-
-                if(amount == 0)
+                if (amount == 0)
                 {
                     foreach(var denom in denomAmount) 
                     {
-                        if(denom.Value > 0)
+                        System.Diagnostics.Debug.WriteLine(denom.Key + " " + denom.Value);
+                        if (denom.Value > 0)
                         {
                             bool success = false;
-                            do
-                            {
-                                withdrawDenom = denom.Value;
-                                withdrawNum = denom.Key;
-                                _procState = 5;
-                            }
-                            while (!success);
+                           
+                            withdrawDenom = denom.Value;
+                            withdrawNum = denom.Key;
+                            success = DisburseBills(withdrawNum, withdrawDenom);
                         }
                     }
                 }
@@ -373,8 +391,7 @@ namespace GUIEnabledATM
                 monitor.setDisplayText("Insufficient funds");
                 _procState = 6;
             }
-            monitor.setDisplayText("Insufficient funds");
-            _procState = 6;
+            System.Diagnostics.Debug.WriteLine("Bottom of verify bills");
         }
         public void Welcome()
         {

@@ -24,22 +24,22 @@ namespace GUIEnabledATM.PeripheralDevices
         {
             port1 = new List<Port>();
             for (var i = 0; i < 3; ++i)
-                port1.Add(new Port(0xFF00, i));
+                port1.Add(new Port(0xFF00, 0));
 
             port2 = new List<Port>();
             for (var i = 0; i < 10; ++i)
-                port2.Add(new Port(0xFF00, i));
+                port2.Add(new Port(0xFF00, 0));
 
             _numInputs = new int[7] { 0, 0, 0, 0, 0, 0, 0 };
             _numInputCount = 0;
             _numScanStatus = new();
             for (int i = 0; i < 10; ++i)
                 _numScanStatus.Add((0, 0));
-            _numKeysAvailable = false;
+            _numKeysAvailable = true;
 
             _funcInput = 0;
             _funcScanStatus = new() { (0, 0), (0, 0), (0, 0) };
-            _funcKeysAvailable = false;
+            _funcKeysAvailable = true;
         }
     }
 }

@@ -29,6 +29,7 @@ namespace GUIEnabledATM.PeripheralDevices
         {
             if (displayText != value)
             {
+                System.Diagnostics.Debug.WriteLine("Set display text to: " + value);
                 displayText = value;
                 OnPropertyChanged(displayText);
             }

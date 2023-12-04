@@ -128,6 +128,7 @@ namespace GUIEnabledATM
                 if (_argStr != null)
                 {
                     int portNum = Convert.ToInt32(_argStr);
+                    System.Diagnostics.Debug.WriteLine("Send signal to function button " + portNum);
                     atm.keypad.port1[portNum-1]._input =1;
                 }
             }

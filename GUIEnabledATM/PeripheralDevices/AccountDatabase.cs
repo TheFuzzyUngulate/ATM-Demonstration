@@ -44,14 +44,16 @@ namespace GUIEnabledATM.PeripheralDevices
         {
             databaseSize = 0;
             sysAccount = new List<Account>();
-            sysAccount.Add(new Account(1, true, 1234, "Kaitlin", 1000, 500));
+            sysAccount.Add(new Account(1, true, 9999, "Kaitlin", 1000, 500));
         }
 
         public bool checkPinIsCorrect(string cardNum, int pin)
         {
             foreach (Account account in sysAccount)
             {
-                if(account.accountNum.ToString() == cardNum)
+                System.Diagnostics.Debug.WriteLine("account num " + account.accountNum);
+                System.Diagnostics.Debug.WriteLine("account pin " + account.pin);
+                if (account.accountNum.ToString().Equals(cardNum))
                 {
                     if (account.pin == pin)
                     {
@@ -85,6 +87,7 @@ namespace GUIEnabledATM.PeripheralDevices
             {
                 if (account.accountNum == cardNum)
                 {
+                    System.Diagnostics.Debug.WriteLine("account balance " + account.balance);
                     return account.balance;
                 }
             }
