@@ -10,30 +10,37 @@ namespace GUIEnabledATM.PeripheralDevices
 {
     internal class Monitor
     {
-        public string displayText
-        {
-            get { return displayText; }
-            set
-            {
-                displayText = value;
-                OnPropertyChanged(displayText);
-            }
-        }
-        public string timeText
-        {
-            get { return timeText; }
-            set
-            {
-                timeText = value;
-                OnPropertyChanged(timeText);
-            }
-        }
+        public string displayText;
+
+        public string timeText;  
+
         internal Int32 monitorAddr;
 
         internal Monitor()
         {
             monitorAddr = 0xFF03;
         }
+
+       public string getDisplayText()
+        {
+            return displayText;
+        }
+        public void setDisplayText(string value)
+        {
+            displayText = value;
+            OnPropertyChanged(displayText);
+        }
+
+        public string getTimeText()
+        {
+            return timeText;
+        }
+        public void setTimeText(string value)
+        {
+            displayText = value;
+            OnPropertyChanged(timeText);
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
